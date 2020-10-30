@@ -15,25 +15,47 @@ window.geometry("600x600")
 count = 0
 connector = pymysql.connect(host ='localhost', user = 'root', database = dbName)
 cur = connector.cursor()
-
+def empMenu():
+    print('empMenu')
 def gettingLoginDetail():
     id = en1.get()
     password = en2.get()
     role = en3.get()
+    flag1 = False
+    flag2 = False
+    try:
+        id = int(id)
+    except:
+        messagebox.showinfo("ERROR", "Id should be integer")
+        return
     if role == 'emp':
-        sqlLoginID = "select empId from "+empTable+" where password = '"+password+"'" 
-        sqlname = "select name form "+empTable+" where password = '"+password+"'"
-
-        try:
-            cur.execute(sqlLoginID)
-            for i in cur:
-                getLoginId = i[0]
-            cur.execute(sqlname)
-            for i in cur:
-                getname = i[0]
-            
-        except:
-            messagebox.showinfo("Failed", "Please check your credential")
+        sqlLoginID = "select empId from "+empTable
+        cur.execute(sqlLoginID)
+        names = list(cur.fetchall())
+        for i in names:
+            for j in list(i):
+                if id == int(j):
+                    flag1 = True
+                    break
+        if flag1 == False:
+            messagebox.showinfo("Failure", "Incorrect login ID")
+            return
+        sqlpass = "select password from "+empTable
+        cur.execute(sqlpass)
+        myresult = list(cur.fetchall())
+        for i in myresult:
+            for j in list(i):
+                if password == j:
+                    flag2 = True
+                    break
+        if flag2 == False:
+            messagebox.showinfo("Failure", "Incorrect Password")
+            return
+        if flag1 == True and flag2 == True:
+            empMenu()
+            messagebox.showinfo("SUCCESS","You have successfully logged in")
+        else:
+            messagebox.showinfo("Warning", "User doesn't Exist")
 def Login():
     global LabelFrame
     global count
@@ -52,7 +74,7 @@ def Login():
     # password
     lb2 = Label(LabelFrame, text = "Password: ", bg= "#044F67")
     lb2.place(relx = 0.05, rely = 0.4)
-    en2 = Entry(LabelFrame)
+    en2 = Entry(LabelFrame, show='*')
     en2.place(relx = 0.3, rely = 0.4, relwidth = 0.62)
 
     # Role
