@@ -3,6 +3,7 @@ from tkinter import *
 import pymysql
 from PIL import ImageTk, Image
 from tkinter import messagebox
+from addBookDetail import *
 
 dbName = "LMSdb"
 empTable = "empdetail"
@@ -17,6 +18,46 @@ connector = pymysql.connect(host ='localhost', user = 'root', database = dbName)
 cur = connector.cursor()
 def empMenu():
     print('empMenu')
+    global headingframe1, headingframe2, LabelFrame, headleble1, submitBtn, Canvas1, backbtn
+    headleble1.destroy()
+    headingframe2.destroy()
+    headingframe1.destroy()
+    Canvas1.destroy()
+    submitBtn.destroy()
+    Canvas1 = Canvas(window)
+    Canvas1.config(bg= '#F7F1E3', width = imageSizeWidth, height = imageSizeHeight)
+    Canvas1.pack(expand=True, fill= BOTH)
+
+    headingframe1 = Frame(window, bg='#333945', bd = 5)
+    headingframe1.place(relx = 0.25, rely = 0.1, relwidth = 0.5, relheight = 0.13)
+
+    headingframe2 = Frame(headingframe1, bg = "#EAF0F1")
+    headingframe2.place(relx =0.01, rely = 0.05, relwidth = 0.98, relheight = 0.9)
+
+    headleble1 = Label(headingframe2, text = "Employee Menu", fg ='black')
+    headleble1.place(relx = 0.25, rely = 0.15, relwidth = 0.5, relheight = 0.5)
+    Btn1 = Button(window, text = "Add Book Details", bg = 'black', fg = 'white', command = addBook)
+    Btn1.place(relx = 0.28, rely = 0.3, relwidth = 0.45, relheight = 0.1)
+
+    Btn2 = Button(window, text = "Delete Book", bg = 'black', fg = 'white', command = delete)
+    Btn2.place(relx = 0.28, rely = 0.4, relwidth = 0.45, relheight = 0.1)
+
+    Btn3 = Button(window, text = "View Book List", bg ='black', fg = 'white', command= View)
+    Btn3.place(relx = 0.28, rely = 0.5, relwidth = 0.45, relheight = 0.1)
+
+    Btn4 = Button(window, text = "Search Book", bg = 'black', fg = 'white', command = searchbook)
+    Btn4.place(relx = 0.28, rely = 0.6, relwidth = 0.45, relheight =  0.1)
+
+    Btn5 = Button(window, text ="Issue Book to student", bg = 'black', fg= 'white', command = issuebook)
+    Btn5.place(relx = 0.28, rely = 0.7, relwidth = 0.45, relheight = 0.1)
+
+    backbtn = Button(window, text ="<  Back", bg = '#455A64', fg = 'white', command = Employee)
+    backbtn.place(relx = 0.5, rely = 0.9, relwidth = 0.18, relheight = 0.08)
+
+
+def studentMenu():
+    print('Student menu')
+
 def gettingLoginDetail():
     id = en1.get()
     password = en2.get()
@@ -38,7 +79,7 @@ def gettingLoginDetail():
                     flag1 = True
                     break
         if flag1 == False:
-            messagebox.showinfo("Failure", "Incorrect login ID")
+            messagebox.showerror("Failure", "Incorrect login ID")
             return
         sqlpass = "select password from "+empTable
         cur.execute(sqlpass)
@@ -49,13 +90,44 @@ def gettingLoginDetail():
                     flag2 = True
                     break
         if flag2 == False:
-            messagebox.showinfo("Failure", "Incorrect Password")
+            messagebox.showerror("Failure", "Incorrect Password")
             return
         if flag1 == True and flag2 == True:
             empMenu()
             messagebox.showinfo("SUCCESS","You have successfully logged in")
         else:
             messagebox.showinfo("Warning", "User doesn't Exist")
+    elif role == 'stu':
+        sqlLoginID = "select Roll_Num from "+stuTable
+        cur.execute(sqlLoginID)
+        names = list(cur.fetchall())
+        for i in names:
+            for j in list(i):
+                if id == int(j):
+                    flag1 = True
+                    break
+        if flag1 == False:
+            messagebox.showerror("Failure", "Incorrect login ID")
+            return
+        sqlpass = "select password from "+stuTable
+        cur.execute(sqlpass)
+        myresult = list(cur.fetchall())
+        for i in myresult:
+            for j in list(i):
+                if password == j:
+                    flag2 = True
+                    break
+        if flag2 == False:
+            messagebox.showerror("Failure", "Incorrect Password")
+            return
+        if flag1 == True and flag2 == True:
+            studentMenu()
+            messagebox.showinfo("SUCCESS","You have successfully logged in")
+        else:
+            messagebox.showinfo("Warning", "User doesn't Exist")
+
+    else:
+        messagebox.showwarning("Mismatch", "Enter correct Role")   
 def Login():
     global LabelFrame
     global count
@@ -127,6 +199,10 @@ def gettingEmpDetail():
     en6.delete(0,END)
 def EmpRegister():
     global LabelFrame
+    global count
+    count += 1
+    if(count>=2):
+        LabelFrame.destroy()
     global en1, en2, en3, en4, en5, en6
     LabelFrame = Frame(window, bg = "#044F67")
     LabelFrame.place(relx = 0.2, rely = 0.44, relwidth = 0.6, relheight = 0.42)
@@ -234,6 +310,10 @@ def gettingStuDetail():
 def StuRegister():
     # roll number, student name, student password, student department, student semester, student batch
     global LabelFrame
+    global count
+    count += 1
+    if count>=2:
+        LabelFrame.destroy()
     global en1, en2, en3, en4, en5, en6
     LabelFrame = Frame(window, bg = "#044F67")
     LabelFrame.place(relx = 0.2, rely = 0.44, relwidth = 0.6, relheight = 0.42)
@@ -334,7 +414,7 @@ headingframe2.place(relx=0.01,rely=0.05,relwidth=0.98,relheight=0.9)
 headleble1 = Label(headingframe2, text="Welcome to LMS",fg = 'black')
 headleble1.place(relx = 0.25, rely = 0.1, relwidth = 0.5, relheight = 0.5)
 
-#command means which function you wanna call me from the button
+#command means which function you wanna call from the button
 # employee Button
 Btn1 = Button(window, text = "Employee", bg = 'black', fg = 'white', command = Employee)
 Btn1.place(relx = 0.25, rely = 0.3, relwidth = 0.2, relheight = 0.1)
