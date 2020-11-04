@@ -4,6 +4,10 @@ import pymysql
 from PIL import ImageTk, Image
 from tkinter import messagebox
 from addBookDetail import *
+from IssueBook import *
+from SearchBook import *
+from ViewBook import *
+from DeleteBook import *
 
 dbName = "LMSdb"
 empTable = "empdetail"
@@ -16,7 +20,9 @@ window.geometry("600x600")
 count = 0
 connector = pymysql.connect(host ='localhost', user = 'root', database = dbName)
 cur = connector.cursor()
-def empMenu():
+
+
+def empMenu(employee_name):
     print('empMenu')
     global headingframe1, headingframe2, LabelFrame, headleble1, submitBtn, Canvas1, backbtn
     headleble1.destroy()
@@ -34,7 +40,7 @@ def empMenu():
     headingframe2 = Frame(headingframe1, bg = "#EAF0F1")
     headingframe2.place(relx =0.01, rely = 0.05, relwidth = 0.98, relheight = 0.9)
 
-    headleble1 = Label(headingframe2, text = "Employee Menu", fg ='black')
+    headleble1 = Label(headingframe2, text = "Welcome "+ employee_name, fg ='black')
     headleble1.place(relx = 0.25, rely = 0.15, relwidth = 0.5, relheight = 0.5)
     Btn1 = Button(window, text = "Add Book Details", bg = 'black', fg = 'white', command = addBook)
     Btn1.place(relx = 0.28, rely = 0.3, relwidth = 0.45, relheight = 0.1)
@@ -55,8 +61,37 @@ def empMenu():
     backbtn.place(relx = 0.5, rely = 0.9, relwidth = 0.18, relheight = 0.08)
 
 
-def studentMenu():
-    print('Student menu')
+def studentMenu(studnet_name):
+    global headingframe1, headingframe2, headleble1, submitBtn, Canvas1, Btn1, Btn2, Btn3, Btn4, Btn5, backbtn
+    headingframe1.destroy()
+    headingframe2.destroy()
+    headleble1.destroy()
+    Canvas1.destroy()
+    submitBtn.destroy()
+    Canvas1 = Canvas(window)
+    Canvas1.config(bg ="#dff9fb", width = imageSizeWidth, height = imageSizeHeight)
+    Canvas1.pack(expand= True, fill= BOTH)
+
+    headingframe1 = Frame(window, bg = "#333945", bd = 5)
+    headingframe1.place(relx = 0.25, rely = 0.1, relwidth = 0.5, relheight = 0.13)
+
+    headingframe2 = Frame(headingframe1, bg = "#EAF0F1")
+    headingframe2.place(relx = 0.01, rely = 0.05, relwidth = 0.98, relheight = 0.9)
+
+    headleble1 = Label(headingframe2, text = "Welcome " + studnet_name, fg = 'black')
+    headleble1.place(relx = 0.25, rely = 0.15, relwidth = 0.5, relheight = 0.5)
+
+    Btn1 = Button(window, text = "View Book List", bg = 'black', fg ='white', command = View)
+    Btn1.place(relx = 0.28, rely = 0.35, relwidth = 0.45, relheight = 0.1)
+
+    Btn2 = Button(window, text = "Search Book", bg = 'black', fg = 'white', command = searchbook)
+    Btn2.place(relx = 0.28, rely = 0.45, relwidth = 0.45, relheight = 0.1)
+
+    backbtn = Button(window, text = "<  Back", bg = "#455A64", fg= 'white', command = Student)
+    backbtn.place(relx = 0.5, rely = 0.9, relwidth = 0.18, relheight = 0.08)
+
+
+
 
 def gettingLoginDetail():
     id = en1.get()
@@ -70,64 +105,50 @@ def gettingLoginDetail():
         messagebox.showinfo("ERROR", "Id should be integer")
         return
     if role == 'emp':
-        sqlLoginID = "select empId from "+empTable
-        cur.execute(sqlLoginID)
+        sqlLogin = "select name from "+empTable+" where empId = '"+str(id)+"'"
+        cur.execute(sqlLogin)
         names = list(cur.fetchall())
-        for i in names:
-            for j in list(i):
-                if id == int(j):
-                    flag1 = True
-                    break
-        if flag1 == False:
-            messagebox.showerror("Failure", "Incorrect login ID")
+        if len(names)==0:
+            messagebox.showerror("Failure", "User Doesn't Exist")
             return
-        sqlpass = "select password from "+empTable
-        cur.execute(sqlpass)
-        myresult = list(cur.fetchall())
-        for i in myresult:
-            for j in list(i):
-                if password == j:
-                    flag2 = True
-                    break
-        if flag2 == False:
-            messagebox.showerror("Failure", "Incorrect Password")
-            return
-        if flag1 == True and flag2 == True:
-            empMenu()
-            messagebox.showinfo("SUCCESS","You have successfully logged in")
         else:
-            messagebox.showinfo("Warning", "User doesn't Exist")
+            employee_name = list(names[0])[0]
+            sqlpass = "select password from "+stuTable+" where Roll_Num = '"+str(id)+"'"
+            cur.execute(sqlpass)
+            myresult = list(cur.fetchall())
+            db_password = list(myresult[0])[0]
+            print(db_password)
+            if(db_password==password):
+                messagebox.showinfo("SUCCESS","You have successfully logged in")
+                empMenu(employee_name)
+            else:
+                messagebox.showerror("Failure", "Incorrect Password")
+                return
+                
     elif role == 'stu':
-        sqlLoginID = "select Roll_Num from "+stuTable
-        cur.execute(sqlLoginID)
+        sqlLogin = "select name from "+stuTable+" where Roll_Num = '"+str(id)+"'"
+        cur.execute(sqlLogin)
         names = list(cur.fetchall())
-        for i in names:
-            for j in list(i):
-                if id == int(j):
-                    flag1 = True
-                    break
-        if flag1 == False:
-            messagebox.showerror("Failure", "Incorrect login ID")
+        if len(names)==0:
+            messagebox.showerror("Failure", "User Doesn't Exist")
             return
-        sqlpass = "select password from "+stuTable
-        cur.execute(sqlpass)
-        myresult = list(cur.fetchall())
-        for i in myresult:
-            for j in list(i):
-                if password == j:
-                    flag2 = True
-                    break
-        if flag2 == False:
-            messagebox.showerror("Failure", "Incorrect Password")
-            return
-        if flag1 == True and flag2 == True:
-            studentMenu()
-            messagebox.showinfo("SUCCESS","You have successfully logged in")
         else:
-            messagebox.showinfo("Warning", "User doesn't Exist")
+            studentName = list(names[0])[0]
+            sqlpass = "select password from "+stuTable+" where Roll_Num = '"+str(id)+"'"
+            cur.execute(sqlpass)
+            myresult = list(cur.fetchall())
+            db_password = list(myresult[0])[0]
+            if(db_password==password):
+                messagebox.showinfo("SUCCESS","You have successfully logged in")
+                studentMenu(studentName)
+            else:
+                messagebox.showerror("Failure", "Incorrect Password")
+                return
 
     else:
         messagebox.showwarning("Mismatch", "Enter correct Role")   
+
+
 def Login():
     global LabelFrame
     global count
@@ -189,6 +210,7 @@ def gettingEmpDetail():
     try:
         cur.execute(sql)
         connector.commit()
+        messagebox.showinfo("Success!", "Successful Register")
     except:
         messagebox.showinfo("Error inserting", "Cannot add data to database")
     en1.delete(0,END)
@@ -197,6 +219,8 @@ def gettingEmpDetail():
     en4.delete(0,END)
     en5.delete(0,END)
     en6.delete(0,END)
+
+    
 def EmpRegister():
     global LabelFrame
     global count
@@ -299,6 +323,7 @@ def gettingStuDetail():
     try:
         cur.execute(sql)
         connector.commit()
+        messagebox.showinfo("Success!", "Successful Register")
     except:
         messagebox.showinfo("Error inserting", "Cannot add data to Database")
     en1.delete(0,END)
