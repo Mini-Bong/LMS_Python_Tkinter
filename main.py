@@ -8,7 +8,6 @@ from IssueBook import *
 from SearchBook import *
 from ViewBook import *
 from DeleteBook import *
-
 dbName = "LMSdb"
 empTable = "empdetail"
 stuTable = "studetail"
@@ -51,7 +50,7 @@ def empMenu(employee_name):
     Btn3 = Button(window, text = "View Book List", bg ='black', fg = 'white', command= View)
     Btn3.place(relx = 0.28, rely = 0.5, relwidth = 0.45, relheight = 0.1)
 
-    Btn4 = Button(window, text = "Search Book", bg = 'black', fg = 'white', command = searchbook)
+    Btn4 = Button(window, text = "Search Book", bg = 'black', fg = 'white', command = searchBook)
     Btn4.place(relx = 0.28, rely = 0.6, relwidth = 0.45, relheight =  0.1)
 
     Btn5 = Button(window, text ="Issue Book to student", bg = 'black', fg= 'white', command = issuebook)
@@ -113,11 +112,12 @@ def gettingLoginDetail():
             return
         else:
             employee_name = list(names[0])[0]
-            sqlpass = "select password from "+stuTable+" where Roll_Num = '"+str(id)+"'"
+            print(names)
+            sqlpass = "select password from "+empTable+" where empId = '"+str(id)+"'"
             cur.execute(sqlpass)
             myresult = list(cur.fetchall())
+            print(myresult)
             db_password = list(myresult[0])[0]
-            print(db_password)
             if(db_password==password):
                 messagebox.showinfo("SUCCESS","You have successfully logged in")
                 empMenu(employee_name)
