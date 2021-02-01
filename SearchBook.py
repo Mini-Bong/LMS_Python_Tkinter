@@ -5,10 +5,14 @@ from tkinter import messagebox
 import pymysql
 
 dbName = 'LMSdb'
-connector = pymysql.connect(host = 'localhost', user = 'root', password = '', database = dbName)
+connector = pymysql.connect(host = 'localhost', user = 'root', database = dbName)
 cur = connector.cursor()
 
 bookTable = 'books'
+
+def utilFunction():
+    window.destroy()
+    searchBook()
 
 
 def search():
@@ -27,14 +31,28 @@ def search():
     Label(labelframe, text = "%-10s%-30s%-20s%-30s%-20s"%('BID', 'Title', 'Subject', 'Authon', 'Status'), bg = 'black', fg= 'white').place(relx = 0.07, rely = 0.1)
     Label(labelframe, text = "-------------------------------------------------------------------------", bg = 'black', fg=  'white').place(relx = 0.05, rely = 0.2)
 
-    sql_query = "select * from "+bookTable+"where subject = '"+sub"'"
-    
+    sql_query = "select * from "+bookTable+" where subject = '"+sub+"'"
 
+    try:
+        cur.execute(sql_query)
+        connector.commit()
+        for i in cur:
+            Label(labelframe, text = "%-10s%-30s%-20s%-30s%-20s"%(i[0], i[1], i[2], i[3], i[4]), bg ='black', fg = 'white').place(relx =0.07, rely = y)
+            y += 0.1
+    except Exception as e:
+        print(e)
+        messagebox.showinfo("Search Error", "Please type valid book name, Try again")
+    
+    print(sub)
+
+    quitbtn = Button(window, text = "< Back", bg = '#455A64', fg = 'white', command = utilFunction)
+    quitbtn.place(relx = 0.53, rely = 0.85, relwidth = 0.18, relheight = 0.08)
 
 
 
 def searchBook():
     global en1, Searchbtn, lb1, labelframe, quitbtn, Canvas1, window
+
     window = tk.Tk()
     window.resizable(0,0) #it disable window maximizing buttom 
     window.title("Library")
@@ -80,6 +98,3 @@ def searchBook():
     quitbtn = Button(labelframe, text = "Quit", bg = '#455A64', fg = 'white', command = window.quit)
     quitbtn.place(relx = 0.60, rely = 0.6, relwidth = 0.25, relheight = 0.2)
     window.mainloop()
-
-
-searchBook()

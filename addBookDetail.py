@@ -15,7 +15,8 @@ def register_books():
         cur.execute(insertBookQuery)
         connector.commit()
         messagebox.showinfo("Success!", "Books added successfully")
-    except:
+    except Exception as e:
+        print(e)
         messagebox.showinfo("Error", "Can't add data to databse")
     print(book_id)
     print(title)
@@ -84,5 +85,3 @@ def addBook():
     submitBtn.place(relx = 0.28, rely = 0.9, relwidth = 0.18, relheight = 0.08)
 
     window.mainloop()
-
-addBook()

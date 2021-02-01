@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import *
+from tkinter import Tk
 import pymysql
 from PIL import ImageTk, Image
 from tkinter import messagebox
@@ -11,6 +11,7 @@ from DeleteBook import *
 dbName = "LMSdb"
 empTable = "empdetail"
 stuTable = "studetail"
+
 window = tk.Tk()
 window.resizable(0,0) #it disable window maximizing buttom
 window.title("Library Management System")
