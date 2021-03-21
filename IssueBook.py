@@ -19,7 +19,35 @@ allEmpId = []
 allBookId =[]
 
 def issue():
-    print('Book issue successfull')
+    global issueBtn, labelFrame, lb1, en1, en2, en3, quitBtn, window, Canvas1, status
+
+    book_id = en1.get()
+    issue_to = en2.get()
+    issue_be = en3.get()
+    issueBtn.destroy()
+    quitBtn.destroy()
+    labelFrame.destroy()
+    lb1.destroy()
+    en1.destroy()
+    en2.destroy()
+    en3.destroy()
+
+    extract_book_id = "select bookId from "+bookTable
+    try:
+        cur.execute(extract_book_id)
+        connector.commit()
+        for i in cur:
+            allBookId.append(i[0])
+        if book_id in allBookId:
+            checkAvail = "select status from "+bookTable+" where bookId = '"+book_id+"'"
+            cur.execute(checkAvail)
+            connecter.commit()
+            for i in cur:
+                check = i[0]
+            
+
+
+
 
 def issuebook():
     global en1, en2, en3, issueBtn, lb1, labelFrame, quitBtn, Canvas1, window, status

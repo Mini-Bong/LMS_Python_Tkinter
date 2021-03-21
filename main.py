@@ -4,7 +4,7 @@ import pymysql
 from PIL import ImageTk, Image
 from tkinter import messagebox
 from addBookDetail import *
-from IssueBook import *
+#from IssueBook import *
 from SearchBook import *
 from ViewBook import *
 from DeleteBook import *
